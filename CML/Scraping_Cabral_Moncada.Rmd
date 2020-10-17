@@ -1,0 +1,208 @@
+---
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.3.2
+  kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
+```{python}
+import numpy as np
+import pandas as pd
+import numpy as np
+
+pd.set_option('display.max_columns', None)  
+pd.set_option('display.max_rows', 100)  
+
+#Beautiful Soup and Requests
+import requests
+from bs4 import BeautifulSoup
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+
+#Import Regex
+import re
+
+#URLIB
+import urllib
+```
+
+```{python}
+def requests_retry_session(
+    retries=3,
+    backoff_factor=0.3,
+    status_forcelist=(500, 502, 504),
+    session=None,
+):
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
+```
+
+```{python}
+url = 'https://www.cml.pt/leiloes/online'
+dict_url_links = {}
+flag = True
+while flag:
+    
+    s = requests.Session()
+    soup = BeautifulSoup(requests_retry_session(session=s).get(url).content)
+
+    #Get all urls for modern and contemporary art auctions
+    list_url = soup.find_all('a', href=re.compile("leilao-online-de-arte-moderna-e-contemporanea"))
+
+    #Save links on the page to a dictionary of "auction number : link" pairs
+    for i in list_url:
+        dict_url_links[int(i['href'].split('/')[-2])] = i['href']
+
+    #Get next page link
+    list_next_page = soup.find_all('a', href=True, text='Seguinte')
+    if len(list_next_page)>0:
+        url = list_next_page[0]['href']
+    else:
+        flag=False
+        print('Final page reached!')
+        
+#Store links in a DataFrame for saving
+df_auction_links = pd.DataFrame(data=dict_url_links.values(),index=dict_url_links.keys(),columns=['URL'])
+#Load previous auction_links
+df_auction_links_previous = pd.read_csv('cml_auction_links.csv',index_col=0)
+#Save auction links to drive
+df_auction_links.to_csv('cml_auction_links_new.csv')
+
+to_run= True
+#If we want to run analysis only on the new auctions, run the following if and get the dataframe of only the new auctions
+if to_run==True:
+    dfs_dictionary = {'DF1':df_auction_links,'DF2':df_auction_links_previous}
+    df = pd.concat(dfs_dictionary)
+    df = df.drop_duplicates(keep=False).copy()
+```
+
+```{python}
+#Create a dictionary for the data
+dic_artworks = {'Auction Number':[],
+               'Artwork Number':[],
+               'Author':[],
+               'Title':[],
+               'Technique':[],
+               'Dimensions':[],
+               'Estimated Price':[],
+               'Date of Auction End':[],
+               'Sale Price':[],
+               'Image URL':[]}
+
+#Get list of auction URL's
+list_auction_url = df['URL'].tolist()
+
+for auction_nbr in range(len(list_auction_url)):
+    #Loop over the auction url's
+    url_auction = list_auction_url[auction_nbr]
+    url = url_auction
+    #Record the auction number
+    tmp_auction_nbr = df.index[auction_nbr]
+
+    #Loop over all pages of the auction and scrape the artworks
+    flag = True
+    counter=1
+    while flag == True:
+        s = requests.Session()
+        soup = BeautifulSoup(requests_retry_session(session=s).get(url).content)
+        tmp_list = soup.find_all('div',attrs={'class':'mdl-cell mdl-card mdl-shadow--4dp portfolio-card loteCard'})
+        for entry in range(len(tmp_list)):
+            #Loop over all the artworks on the page
+
+            dic_artworks.setdefault('Auction Number', []).append(tmp_auction_nbr)
+            dic_artworks.setdefault('Artwork Number', []).append(counter)
+
+            try:
+                tmp_author = tmp_list[entry].find('span',attrs={'class':'dsp_autor'}).text.rstrip('\n')
+                dic_artworks.setdefault('Author', []).append(tmp_author)
+            except:
+                tmp_author = np.nan
+                dic_artworks.setdefault('Author', []).append(tmp_author)
+            try:
+                tmp_title = tmp_list[entry].find('span',attrs={'class':'dsp_designacao'}).text
+                dic_artworks.setdefault('Title', []).append(tmp_title)
+            except:
+                tmp_title = np.nan
+                dic_artworks.setdefault('Title', []).append(tmp_title)
+            try:   
+                tmp_technique = tmp_list[entry].find_all("span", id=re.compile(r"detalhesLotePt"))[0].text
+                dic_artworks.setdefault('Technique', []).append(tmp_technique)
+            except:
+                tmp_technique = np.nan
+                dic_artworks.setdefault('Technique', []).append(tmp_technique)
+            try:
+                tmp_dim = [i for i in tmp_list[entry].text.split('\n') if 'dim' in i.lower()][0]
+                dic_artworks.setdefault('Dimensions', []).append(tmp_dim)
+            except:
+                tmp_dim = np.nan   
+                dic_artworks.setdefault('Dimensions', []).append(tmp_dim)
+            try:
+                tmp_estimated_price = int(re.findall(r'\d+',tmp_list[entry].find('p',attrs={'class':'lote-base-estimativa'}).text)[0])
+                dic_artworks.setdefault('Estimated Price', []).append(tmp_estimated_price)
+            except:
+                tmp_estimated_price = np.nan 
+                dic_artworks.setdefault('Estimated Price', []).append(tmp_estimated_price)
+            try:    
+                tmp_date_auction = tmp_list[entry].find_all("p", id=re.compile(r"dataFim"))[0].text.split('\ndone')[1].split('Terminado')[0]
+                dic_artworks.setdefault('Date of Auction End', []).append(tmp_date_auction)
+            except:
+                tmp_date_auction = np.nan  
+                dic_artworks.setdefault('Date of Auction End', []).append(tmp_date_auction)
+            try:
+                tmp_sale_price = tmp_list[entry].find_all("p", id=re.compile(r"vendido"))[0].text.split('€ ')[1].split('Vendido')[0]
+                dic_artworks.setdefault('Sale Price', []).append(tmp_sale_price)
+            except:
+            #    tmp_sale_price = int(tmp_list[entry].find_all("p", id=re.compile(r"retirado"))[0].text.split('€ ')[1].split('Retirado')[0])
+                tmp_sale_price = 'Not sold'
+                dic_artworks.setdefault('Sale Price', []).append(tmp_sale_price)
+            try:    
+                tmp_img_url = tmp_list[entry].find_all('img')[0]['src']
+                dic_artworks.setdefault('Image URL', []).append(tmp_img_url)
+            except:
+                tmp_img_url = np.nan  
+                dic_artworks.setdefault('Image URL', []).append(tmp_img_url)
+            counter += 1
+
+        #Get next page link
+        list_next_page = soup.find_all('a', href=True, text='Seguinte')
+        if len(list_next_page)>0:
+            url = list_next_page[0]['href']
+        else:
+            flag=False
+            print('Final page of auction {} reached!\n{} artworks were scraped.'.format(tmp_auction_nbr,counter))    
+            
+#Create DataFrame with the artworks
+df_artworks = pd.DataFrame(dic_artworks)
+
+#Collect Images
+for i in range(df_artworks.shape[0]):
+    #Download images
+    try:
+        urllib.request.urlretrieve(df_artworks.iloc[i]['Image URL'], 'artwork_images/' + str(df_artworks.iloc[i]['Auction Number']) + '_'+ str(df_artworks.iloc[i]['Artwork Number']) +'.jpg')
+    except:
+        print('Um erro foi encontrado')
+
+#Concatenate_the artworks on the existing DataFrame
+df_artworks_previous = pd.read_csv('artworks.csv',encoding='utf-16')
+df_final = pd.concat((df_artworks,df_artworks_previous),axis=1)
+
+#Save the final DataFrame
+df_final.to_csv('artworks.csv',encoding='utf-16')
+```
