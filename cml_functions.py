@@ -536,3 +536,79 @@ def perform_tuning(df_train,df_test,model,params,cv,type_search,list_features_dr
         return model, df_results, best_params, best_estimator,df_feature_coeffs
     else:
         return model, df_results, best_params, best_estimator
+
+
+def process_colours(df,resize_thumbnails=False):
+    """
+    This function receives a DataFrame and opens the corresponding artwork image is it exists. 
+    It will extract dominant and pallet colours and return ther RGB and closest found colour names.
+
+    Inputs - df: A DataFrame with artwork information
+             resize_thumbnails: Boolean to signal need to resize images to thumbnails.
+
+    Outputs - df: A DataFrame with artwork information now with colour information
+    """
+    #If only 1 parameter has been supplied to grid search, then plot it directly else use subplots.
+
+    from PIL import Image
+    import webcolors
+    from colorthief import ColorThief
+
+    def closest_colour(requested_colour):
+        min_colours = {}
+        for key, name in webcolors.CSS3_HEX_TO_NAMES.items():
+            r_c, g_c, b_c = webcolors.hex_to_rgb(key)
+            rd = (r_c - requested_colour[0]) ** 2
+            gd = (g_c - requested_colour[1]) ** 2
+            bd = (b_c - requested_colour[2]) ** 2
+            min_colours[(rd + gd + bd)] = name
+        return min_colours[min(min_colours.keys())]
+
+    def get_colour_name(requested_colour):
+        try:
+            closest_name = webcolors.rgb_to_name(requested_colour)
+        except ValueError:
+            try:
+                closest_name = closest_colour(requested_colour)
+            except:
+                closest_name = np.nan
+        return closest_name
+
+    def resize_image(df):
+        #Set size of thumbnail
+        size = 128, 128
+        file_path = str(df['Auction Number']) + '_' + str(df['Artwork Number'])+'.jpg'
+        try:
+            img = Image.open('./CML/artwork_images/'+ file_path)
+            img.thumbnail(size,Image.ANTIALIAS)
+            img.save('./CML/artwork_images/thumbnails/'+ file_path, "JPEG")
+        except:
+            pass
+
+    if resize_thumbnails:
+        #Resize all images from the DataFrame. Uncomment if needed
+        _ = df.apply(resize_image,axis=1)
+
+    #Get all colours and pallets from the artworks
+    def get_dominant_colour(df):
+        try:
+            return ColorThief('./CML/artwork_images/thumbnails/'+str(df['Auction Number']) + '_' + str(df['Artwork Number'])+'.jpg').get_color(quality=1)
+        except:
+            return np.nan
+    def get_colour_pallet(df):
+        try:
+            return ColorThief('./CML/artwork_images/thumbnails/'+str(df['Auction Number']) + '_' + str(df['Artwork Number'])+'.jpg').get_palette(color_count=10,quality=1)
+        except:
+            return np.nan
+
+    #Get the dominant and pallete colours
+    df['Dominant Colour RGB'] = df.apply(lambda x: get_dominant_colour(x),axis=1)
+    df['Palette Colour RGB'] = df.apply(lambda x: get_colour_pallet(x),axis=1)
+
+    #Get dominant colour name
+    df.loc[df['Dominant Colour RGB'].isna()==False,'Dominant Colour Name'] = df[df['Dominant Colour RGB'].isna()==False]['Dominant Colour RGB'].apply(get_colour_name)
+
+    #Get pallete colour names
+    df.loc[df['Palette Colour RGB'].isna()==False,'Palette Colour Names'] = df[df['Palette Colour RGB'].isna()==False]['Palette Colour RGB'].apply(lambda x: [get_colour_name(i) for i in x])
+
+    return df

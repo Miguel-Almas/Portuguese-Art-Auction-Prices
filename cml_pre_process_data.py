@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from cml_functions import process_author_name,process_dates_birth_death,process_technique,process_dimensions
+from cml_functions import process_author_name,process_dates_birth_death,process_technique,process_dimensions,process_colours
 
 #Import Dataset
 df_cml = pd.read_csv('CML\\artworks.csv',encoding='utf-16',index_col=0)
@@ -29,6 +29,9 @@ df_cml = process_technique(df_cml,'Technique')
 
 #Call function to process Dimensions
 df_cml = process_dimensions(df_cml,'Dimensions')
+
+#Call function to extract and process colours from image
+df_cml = process_colours(df_cml,resize_thumbnails=False)
 
 #Process Data features
 #Convert te Date of Auction End to datetime format
