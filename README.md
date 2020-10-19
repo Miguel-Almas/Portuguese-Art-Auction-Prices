@@ -25,7 +25,5 @@ cml_pre_process_data.py - A script that receives the scrapped data for CML, clea
 cml_functions.py - Contains functions used on both files above.
 cml_data_cleaning_with_explanation.ipynn - Has the notebook version of ml_pre_process_data.py with a step by step exploration of the process and data itself.
 cml/ - Folder that contains the scrapping notebook (still not converted to a script as of now) as well as the data files in .csv format used on that process.
-Lemmatization was performed using NLPyPort: https://github.com/NLP-CISUC/NLPyPort. Many thanks to its authors.
 
-About
-A project to collect art sales in portuguese auction houses to explore and build a predictive model.
+Lemmatization was performed using Stanford's Stanza.
