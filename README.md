@@ -14,7 +14,7 @@ More data should be able to increase the model's generalization ability as it se
 
 Finally, a Plotly Dask dashboard should also be created.
 
-Further exploration is necessary to try and extract features from the artwork image itself as it may be an excelent source of information. Another option is to pass the image to a Neural Network as well as the "metadata" about the artwork itself (data currently stored in a csv that has been used to train the model) and see if it produces a better result.
+Further exploration is necessary to try and extract more features from the artwork image itself as it may be an excelent source of information. Another option is to pass the image to a Neural Network as well as the "metadata" about the artwork itself (data currently stored in a csv that has been used to train the model) and see if it produces a better result.
 
 Clustering should also be explored to try and identify interesting patterns in the data.
 
