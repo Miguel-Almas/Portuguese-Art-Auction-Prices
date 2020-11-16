@@ -1,0 +1,14 @@
+dash==1.16.3
+dash_html_components==1.1.1
+dash_bootstrap_components==0.10.7
+dash_core_components==1.12.1
+numpy==1.18.1
+pandas==1.0.3
+xgboost==0.90
+sklearn==0.22.1
+joblib==0.14.1
+wordcloud==1.8.0
+PIL==8.0.0
+dash_table==4.10.1
+plotly==4.6.0
+gunicorn==19.3.0
