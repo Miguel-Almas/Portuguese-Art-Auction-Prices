@@ -4,6 +4,7 @@ from cml_functions import process_author_name,process_dates_birth_death,process_
 
 #Import Dataset
 df_cml = pd.read_csv('CML\\artworks.csv',encoding='utf-16',index_col=0)
+df_cml = df_cml.reset_index().drop('index',axis=1)
 
 #Transport the author to the Author column
 filt = (df_cml['Title'].str.contains('\(\d')) & (df_cml['Author'].isna()) & (~df_cml['Title'].str.lower().str.contains('álbum')) & (~df_cml['Title'].str.lower().str.contains('caricatura'))
@@ -31,7 +32,7 @@ df_cml = process_technique(df_cml,'Technique')
 df_cml = process_dimensions(df_cml,'Dimensions')
 
 #Call function to extract and process colours from image
-df_cml = process_colours(df_cml,resize_thumbnails=False)
+df_cml = process_colours(df_cml,resize_thumbnails=True)
 
 #Process Data features
 #Convert te Date of Auction End to datetime format

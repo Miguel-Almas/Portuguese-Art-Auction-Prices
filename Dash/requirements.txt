@@ -5,7 +5,7 @@ dash_core_components==1.12.1
 numpy==1.18.1
 pandas==1.0.3
 xgboost==0.90
-sklearn==0.22.1
+scikit-learn==0.22.2
 joblib==0.14.1
 wordcloud==1.8.0
 PIL==8.0.0

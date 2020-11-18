@@ -9,8 +9,12 @@ import pandas as pd
 import numpy as np
 from PIL import Image
 import dash_bootstrap_components as dbc
+import pathlib
 
 from app import app
+# get relative data folder
+PATH = pathlib.Path(__file__).parent
+DATA_PATH = PATH.joinpath("../assets").resolve()
 
 df_cml = pd.read_csv('.\\assets\\data_cml_processed.csv',index_col=0)
 df_cml = df_cml[df_cml['1 Author'] != 'no information']
@@ -146,7 +150,7 @@ layout  = html.Div(children=[
                     'textAlign': 'left',
                 }
             ),
-        ],style={'margin-left': 40}),
+        ],style={'margin-left': 40,'width':'100%','height':'100%'}),
     ],style={'padding': 20}),
 
     #Line breaker
