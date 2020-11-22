@@ -12,7 +12,7 @@ The art world is fickle and somewhat speculative which may difficult this predic
 
 More data should be able to improve the model's predictive capability.
 
-A Plotly Dask dashboard has been created (https://portuguese-art-auction-prices.herokuapp.com/artworks). This will be improved and expanded as further developments are rolled out.
+A Plotly Dask dashboard has been created (https://portuguese-art-auction-prices.herokuapp.com/home). This will be improved and expanded as further developments are rolled out.
 
 Further exploration is necessary to try and extract more features from the artwork image itself as it may be an excelent source of information. Another option is to pass the image to a Neural Network as well as the "metadata" about the artwork itself (data currently stored in a csv that has been used to train the model) and see if it produces a better result.
 
