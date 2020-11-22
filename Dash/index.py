@@ -28,13 +28,13 @@ navbar = dbc.Navbar(
                 dbc.Row(
                     [
                         #dbc.Col(html.Img(src="/assets/virus.png", height="30px")),
-                        dbc.Col(dbc.NavbarBrand("Modern and Contemporary Portuguese Art Dashboard", className="ml-2")),
+                        dbc.Col(dbc.NavbarBrand("Auctioned Portuguese Modern Art", className="ml-2",style={'width':'90%'}),width=10),
                     ],
                     align="center",
                     no_gutters=True,
                 ),
                 href="/home",
-            ),
+            style={'width':'90%'}),
             dbc.NavbarToggler(id="navbar-toggler2"),
             dbc.Collapse(
                 dbc.Nav(
@@ -44,12 +44,12 @@ navbar = dbc.Navbar(
                 id="navbar-collapse2",
                 navbar=True,
             ),
-        ]
+        ],style={'width':'100%'}
     ),
     color="dark",
     dark=True,
     className="mb-4",
-)
+    style={'width':'100%'})
 
 def toggle_navbar_collapse(n, is_open):
     if n:

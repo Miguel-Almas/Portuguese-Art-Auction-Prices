@@ -75,23 +75,23 @@ layout = html.Div([
         dbc.Row([
           dbc.Col(
             html.Img(src = ".\\assets\\hammer.png",style={'width':'100%','height':'88%'}),style={'margin-top':'35px'} #style={'width':'500px','height':'320px'}
-          ),
+          ,width=6,xs=12,sm=12,md=6,lg=6,xl=6,),
           dbc.Col(
             dbc.Row([
               #html.H1("The Modern Portuguese Auctioned Art dashboard", className="text-center",style={
               #'textAlign': 'center','margin-left':'0px', 'margin-right':'0px'}),
               html.H2(children='Welcome to this dashboard!',style={
-              'textAlign': 'left','margin-top':'0px','margin-left':'0px', 'margin-right':'0px'}),
+              'textAlign': 'left','margin-top':'0px','margin-left':'0px','margin-left':'20px', 'margin-right':'20px'}),
               html.H5(children='This app has two main focus: to allow price prediction based on user input features and exploration of artworks sold in'
                                      ' auctions, with filters by artist.',style={
-              'textAlign': 'left','margin-top':'20px','margin-left':'0px', 'margin-right':'0px'}),
+              'textAlign': 'left','margin-top':'20px','margin-left':'0px','margin-left':'20px', 'margin-right':'20px'}),
               #dbc.Row(dbc.Col(
                 dbc.Card(children=[html.H4(children='Start with the works of art...',className="text-center"),
                                       dcc.Link(dbc.Button('Explore artworks',color="primary",className="mt-3",style={'width':'100%'}), href='/artworks'),
                                        ],
-                             body=True, color="dark", outline=True,style={'margin-top':'20px', 'margin-right':'20px'}),#)),
+                             body=True, color="dark", outline=True,style={'margin-top':'20px','margin-left':'20px', 'margin-right':'20px'}),#)),
             ]),
-          className="mb-5 mt-5",width=6),
+          className="mb-5 mt-5",width=6,xs=12,sm=12,md=6,lg=6,xl=6,),
         ]),
         dbc.Row([
           #html.H2(children='''
@@ -120,22 +120,24 @@ layout = html.Div([
               Choose the artwork's artist. Use no information if unknown of artist not on list.
               ''',
               style={
-                'textAlign': 'left','margin-top':'20px'
+                'textAlign': 'left','margin-top':'0px'
               }),
             dcc.Dropdown(id='artist-dropdown',
                               options=[{'label':i,'value':i} for i in list_authors],
                               placeholder="Select one artist",
                               value='no information',
                               multi=False,
-                              style={"width": "97%", 'margin-left':'0px', 'margin-right':'0px'},
-                  )
-          ],style={'margin-top':'20px','margin-left':'0px', 'margin-right':'0px'}),
+                              style={"width": "100%", 'margin-left':'0px', 'margin-right':'0px'},
+            )
+          ]),
+        ],style={'margin-top':'20px','margin-left':'0px', 'margin-right':'0px'}),
+        dbc.Row([
           dbc.Col([
             html.Div(children='''
               Choose the artist's birth year.
               ''',
               style={
-                'textAlign': 'left','margin-top':'20px'
+                'textAlign': 'left','margin-top':'0px'
               }),
             html.Div([
               dcc.Slider(
@@ -148,13 +150,13 @@ layout = html.Div([
             html.Div(id='slider-output-birth-date'),
             ],style={'width': '100%','display': 'inline-block'}
             ),
-          ],style={'margin-top':'20px','margin-left':'0px', 'margin-right':'0px'}),
+          ],style={'margin-top':'0px','margin-left':'0px', 'margin-right':'0px'}),
           dbc.Col([
             html.Div(children='''
               Choose the artist's year of death.
               ''',
               style={
-                'textAlign': 'left','margin-top':'20px'
+                'textAlign': 'left','margin-top':'0px'
               }),
             html.Div([
               dcc.Slider(
@@ -167,8 +169,8 @@ layout = html.Div([
             html.Div(id='slider-output-death-date'),
             ],style={'width': '100%','display': 'inline-block'}
             ),
-          ],style={'padding':'20px'}),
-        ]),
+          ],style={'padding':'00px'}),
+        ],style={'margin-top':'20px','margin-left':'0px', 'margin-right':'0px'}),
         dbc.Row([
           dbc.Col([
             html.Div(children='''
@@ -208,27 +210,9 @@ layout = html.Div([
             ],style={'width': '100%','display': 'inline-block'}
             ),
           ]),
-          dbc.Col([
-            html.Div(children='''
-              Dimension 3 - Depth of artwork in cm. If unknown, leave as 1.
-              ''',
-              style={
-                'textAlign': 'left',
-              }),
-            html.Div([
-              dcc.Slider(
-                id='slider-dim-3',
-                min=1,
-                max=500,
-                step=1,
-                value=1,
-              ),
-            html.Div(id='slider-output-dim-3'),
-            ],style={'width': '100%','display': 'inline-block'}
-            ),
-          ])
-        ]),
+        ],style={'margin-top':'20px','margin-left':'0px', 'margin-right':'0px'}),
         dbc.Row([
+          dbc.Col([
             html.Div(children='''
               Techniques - Select keyword characteristics. Note that words are lemmas.
               ''',
@@ -241,13 +225,15 @@ layout = html.Div([
                               multi=True,
                               style={"width": "100%", 'margin-left':'0px', 'margin-right':'0px'},
                   ),
-          ],style={'margin-top':'20px','margin-left':'0px', 'margin-right':'0px'}),
+          ]),
+        ],style={'margin-top':'20px','margin-left':'0px', 'margin-right':'0px'}),
         dbc.Row([
-          html.H5(id='prediction',
+          dbc.Col(
+          html.H4(id='prediction',
               style={
                 'textAlign': 'center',
               }),
-          ],style={'margin-top':'20px','margin-bottom':'80px','margin-left':'0px', 'margin-right':'0px'}),
+          )],style={'margin-top':'40px','margin-bottom':'60px','margin-left':'0px', 'margin-right':'0px'}),
         dbc.Row([
             #dbc.Col(dbc.Card(children=[html.H3(children='Explore the artwork data collected.',
             #                                   className="text-center"),
@@ -284,12 +270,6 @@ def update_output(value):
     return 'You have selected "{}" cm'.format(value)
 
 @app.callback(
-    dash.dependencies.Output('slider-output-dim-3', 'children'),
-    [dash.dependencies.Input('slider-dim-3', 'value')])
-def update_output(value):
-    return 'You have selected "{}" cm'.format(value)
-
-@app.callback(
     dash.dependencies.Output('slider-output-birth-date', 'children'),
     [dash.dependencies.Input('slider-birth-date', 'value')])
 def update_output(value):
@@ -305,15 +285,14 @@ def update_output(value):
     dash.dependencies.Output('prediction', 'children'),
     [dash.dependencies.Input('slider-dim-1', 'value'),
     dash.dependencies.Input('slider-dim-2', 'value'),
-    dash.dependencies.Input('slider-dim-3', 'value'),
     dash.dependencies.Input('slider-birth-date', 'value'),
     dash.dependencies.Input('slider-death-date', 'value'),
     dash.dependencies.Input('artist-dropdown', 'value'),
     dash.dependencies.Input('technique-dropdown', 'value')])
-def get_predictions(dim_1,dim_2,dim_3,birth_date,death_date,artist,technique):
+def get_predictions(dim_1,dim_2,birth_date,death_date,artist,technique):
   dim_1 = dim_1
   dim_2 = dim_2
-  dim_3 = dim_3
+  dim_3 = 1
 
   if birth_date is not None:
     birth_date = birth_date
@@ -480,4 +459,4 @@ def get_predictions(dim_1,dim_2,dim_3,birth_date,death_date,artist,technique):
   #prediction = np.exp(model_xgb.predict(df_final))[0]
   prediction = np.exp(joblib_model.predict(df_final))[0]
 
-  return 'Predicted auction sale price is: {:.2f}€'.format(prediction)
+  return 'Predicted auction price:\n{:.2f} €'.format(prediction)
