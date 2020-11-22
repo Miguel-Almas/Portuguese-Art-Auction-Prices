@@ -21,5 +21,12 @@ Clustering should also be explored to try and identify interesting patterns in t
 File structure is as follows:
 
 cml_eda_predictions.ipynb - Contains the graphical exploration, further feature engineering and the model preparation and evaluation itself. cml_pre_process_data.py - A script that receives the scrapped data for CML, cleans and processes it. cml_functions.py - Contains functions used on both files above. cml_data_cleaning_with_explanation.ipynn - Has the notebook version of ml_pre_process_data.py with a step by step exploration of the process and data itself. cml/ - Folder that contains the scrapping notebook (still not converted to a script as of now) as well as the data files in .csv format used on that process. dash/ - Folder that includes a version of the Dash Dashboard that can be run locally.
+=======
+cml_eda_predictions.ipynb - Contains the graphical exploration, further feature engineering and the model preparation and evaluation itself.
+cml_pre_process_data.py - A script that receives the scrapped data for CML, cleans and processes it.
+cml_functions.py - Contains functions used on both files above.
+cml_data_cleaning_with_explanation.ipynn - Has the notebook version of ml_pre_process_data.py with a step by step exploration of the process and data itself.
+cml/ - Folder that contains the scrapping notebook (still not converted to a script as of now) as well as the data files in .csv format used on that process.
+dash/ - Folder that includes a version of the Dash Dashboard that can be run locally.
 
 Lemmatization was performed using Stanford's Stanza.
